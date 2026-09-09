@@ -2,19 +2,30 @@ import streamlit as st
 
 from utils.pdf_loader import load_pdf
 from utils.chunker import split_text
+from utils.embedding import create_embeddings
 
-st.title("📄 PDF Chunking Test")
+st.title("🧠 Embedding Test")
 
-if st.button("Create Chunks"):
+if st.button("Generate Embeddings"):
 
     pdf_text = load_pdf("data/medical.pdf")
 
     chunks = split_text(pdf_text)
 
-    st.success(f"Total Chunks Created: {len(chunks)}")
+    embeddings = create_embeddings(chunks)
 
-    for i, chunk in enumerate(chunks):
+    st.success(f"Chunks: {len(chunks)}")
 
-        with st.expander(f"Chunk {i+1}"):
+    st.success(f"Embeddings: {len(embeddings)}")
 
-            st.write(chunk)
+    st.write("Shape of one embedding:")
+
+    st.write(len(embeddings[0]))
+
+    st.subheader("First Chunk")
+
+    st.write(chunks[0])
+
+    st.subheader("First 20 Numbers of its Embedding")
+
+    st.write(embeddings[0][:20])
