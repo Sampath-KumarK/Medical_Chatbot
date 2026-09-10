@@ -1,20 +1,23 @@
 import streamlit as st
 
-from utils.pdf_loader import load_pdf
-from utils.chunker import split_text
-from utils.embedding import create_embeddings
-from utils.chroma_db import store_embeddings
+from utils.embedding import embedding_model
+from utils.retriever import retrieve_chunks
 
-st.title("🩺 Medical Chatbot - Stage 3.4")
+st.title("🩺 Medical Chatbot - Retriever Test")
 
-if st.button("Store Embeddings"):
+question = st.text_input("Ask a medical question")
 
-    pdf_text = load_pdf("data/medical.pdf")
+if st.button("Search"):
 
-    chunks = split_text(pdf_text)
+    chunks = retrieve_chunks(
+        question,
+        embedding_model
+    )
 
-    embeddings = create_embeddings(chunks)
+    st.success("Top Matching Chunks")
 
-    total = store_embeddings(chunks, embeddings)
+    for i, chunk in enumerate(chunks):
 
-    st.success(f"✅ Successfully stored {total} chunks in ChromaDB!")
+        st.subheader(f"Chunk {i+1}")
+
+        st.write(chunk)
