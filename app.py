@@ -3,10 +3,11 @@ import streamlit as st
 from utils.pdf_loader import load_pdf
 from utils.chunker import split_text
 from utils.embedding import create_embeddings
+from utils.chroma_db import store_embeddings
 
-st.title("🧠 Embedding Test")
+st.title("🩺 Medical Chatbot - Stage 3.4")
 
-if st.button("Generate Embeddings"):
+if st.button("Store Embeddings"):
 
     pdf_text = load_pdf("data/medical.pdf")
 
@@ -14,18 +15,6 @@ if st.button("Generate Embeddings"):
 
     embeddings = create_embeddings(chunks)
 
-    st.success(f"Chunks: {len(chunks)}")
+    total = store_embeddings(chunks, embeddings)
 
-    st.success(f"Embeddings: {len(embeddings)}")
-
-    st.write("Shape of one embedding:")
-
-    st.write(len(embeddings[0]))
-
-    st.subheader("First Chunk")
-
-    st.write(chunks[0])
-
-    st.subheader("First 20 Numbers of its Embedding")
-
-    st.write(embeddings[0][:20])
+    st.success(f"✅ Successfully stored {total} chunks in ChromaDB!")
