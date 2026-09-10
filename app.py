@@ -2,22 +2,51 @@ import streamlit as st
 
 from utils.embedding import embedding_model
 from utils.retriever import retrieve_chunks
+from utils.llm import generate_answer
 
-st.title("🩺 Medical Chatbot - Retriever Test")
+st.set_page_config(
+    page_title="Medical Chatbot",
+    page_icon="🩺"
+)
 
-question = st.text_input("Ask a medical question")
+st.title("🩺 Medical RAG Chatbot")
 
-if st.button("Search"):
+st.write("Ask medical questions based on the uploaded medical PDF.")
 
-    chunks = retrieve_chunks(
-        question,
-        embedding_model
-    )
+question = st.text_input("Enter your question")
 
-    st.success("Top Matching Chunks")
+if st.button("Ask"):
 
-    for i, chunk in enumerate(chunks):
+    if question.strip() == "":
 
-        st.subheader(f"Chunk {i+1}")
+        st.warning("Please enter a question.")
 
-        st.write(chunk)
+    else:
+
+        with st.spinner("Searching medical document..."):
+
+            chunks = retrieve_chunks(
+                question,
+                embedding_model
+            )
+
+            context = "\n\n".join(chunks)
+
+            answer = generate_answer(
+                question,
+                context
+            )
+
+        st.subheader("Answer")
+
+        st.write(answer)
+
+        with st.expander("Retrieved Context"):
+
+            st.write(context)
+
+st.divider()
+
+st.info(
+    "Educational purposes only. Not medical advice."
+)
